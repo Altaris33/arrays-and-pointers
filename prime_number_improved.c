@@ -4,7 +4,7 @@
 #include <time.h>
 #include <math.h>
 
-#define LOWEST_LIMIT 2
+#define LOWEST_LIMIT 3
 #define HIGHEST_LIMIT 1000000
 #define PRIME_LENGTH 100000
 #define PRINT_LIMIT 50
@@ -49,36 +49,51 @@ int validate_usr_input(const int limit) {
     return 1;
 }
 
+bool is_prime_simple(int n) {
+    const int limit = sqrt(n);
+    for (int i = 2; i <= limit; i++)
+    {
+        if (n % 2 == 0) 
+        {
+            return false;
+        }
+    }
+    return true;  
+}
+
+bool is_prime_optimized(int n, int prime_numbers[], int found) {
+    const int limit = sqrt(n);
+    for (int i = 0; i <= found && prime_numbers[i] <= limit; i++)
+    {
+        if (n % prime_numbers[i] == 0)
+        {
+            return false;
+        } 
+    } 
+    return true;
+}
+
 bool is_prime(int n, bool optimized, int prime_numbers[], int found) {
     return optimized ? is_prime_optimized(n, prime_numbers, found) : is_prime_simple(n);
 }
 
-void find_prime_numbers(const int limit, int n, int prime_numbers[]) {
-    for (int j = 0; n <= limit; n++)
+int get_prime_numbers(int limit, int prime_numbers[], bool optimized) {
+    int found = 0;
+    for (int n = 2; n < limit; n++)
     {
-        bool isPrime = true;
-        for (int i = LOWEST_LIMIT; (i * i) < n; i++)
-        {            
-            if (n % i == 0)
-            {
-                isPrime = false;
-                break;
-            }
-        }
-        if (isPrime)
+        if (is_prime(n, optimized, prime_numbers, found))
         {
-            prime_numbers[j++] = n;
+            prime_numbers[found] = n;
+            found++;
         }
-    }  
+    }
+    return found;
 }
 
-void print_prime_numbers(int primes[], const int len) {
-    for (int i = 0; i < len; i++)
+void print_prime_numbers(int primes[], int len) {
+    printf("Found %d prime numbers.\n", len);
+    for (int i = 0; i < len && i < PRINT_LIMIT; i++)
     {
-        if (i > PRINT_LIMIT)
-        {
-            break;
-        }
         printf("%d, ", primes[i]);
     }
     printf("\n");
@@ -93,14 +108,17 @@ int main() {
     scanf("%d", &limit);
     validate_usr_input(limit);
 
-    int prime_numbers[PRIME_LENGTH];
-    int n = LOWEST_LIMIT;
-
-    find_prime_numbers(limit, n, prime_numbers);
-
     printf("\n------------------------------\n");
-    
-    print_prime_numbers(prime_numbers, sizeof(prime_numbers) / sizeof(int));
+
+    int prime_numbers[PRIME_LENGTH];
+
+    // simple version of the algorithm
+    int found = get_prime_numbers(limit, prime_numbers, false);
+    print_prime_numbers(prime_numbers, found);
+
+    // optimized version of the algorithm
+    int found_optimize = get_prime_numbers(limit, prime_numbers, false);
+    print_prime_numbers(prime_numbers, found_optimize);
 
     return 0;
 }
