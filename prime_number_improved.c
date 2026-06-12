@@ -53,7 +53,7 @@ bool is_prime_simple(int n) {
     const int limit = sqrt(n);
     for (int i = 2; i <= limit; i++)
     {
-        if (n % 2 == 0) 
+        if (n % i == 0) 
         {
             return false;
         }
@@ -63,7 +63,7 @@ bool is_prime_simple(int n) {
 
 bool is_prime_optimized(int n, int prime_numbers[], int found) {
     const int limit = sqrt(n);
-    for (int i = 0; i <= found && prime_numbers[i] <= limit; i++)
+    for (int i = 0; i < found && prime_numbers[i] <= limit; i++)
     {
         if (n % prime_numbers[i] == 0)
         {
@@ -99,6 +99,11 @@ void print_prime_numbers(int primes[], int len) {
     printf("\n");
 }
 
+// returns the number of seconds elapsed from one time in the program to another
+double elapsed_time_sec(clock_t start, clock_t end) {
+    return (end - start) / (double) CLOCKS_PER_SEC;
+}
+
 int main() {
     
     printf("\n\n===Prime Number Improved===\n\n");
@@ -112,12 +117,20 @@ int main() {
 
     int prime_numbers[PRIME_LENGTH];
 
-    // simple version of the algorithm
-    int found = get_prime_numbers(limit, prime_numbers, false);
+    clock_t start_clock, end_clock;
+    
+    // get the number of clock ticks elapsed since the program has launched
+    start_clock = clock();
+    int found = get_prime_numbers(limit, prime_numbers, false); // SIMPLE VERSION
+    end_clock = clock();
+    printf("\nSIMPLE ALGORITHM took: %.1f [ms]\n", elapsed_time_sec(start_clock, end_clock) * 1e3);
     print_prime_numbers(prime_numbers, found);
-
-    // optimized version of the algorithm
-    int found_optimize = get_prime_numbers(limit, prime_numbers, false);
+    
+    
+    start_clock = clock();
+    int found_optimize = get_prime_numbers(limit, prime_numbers, true); // OPTIMIZED VERSION
+    end_clock = clock();
+    printf("\nOPTIMIZED ALGORITHM took: %.1f [ms]\n", elapsed_time_sec(start_clock, end_clock) * 1e3);
     print_prime_numbers(prime_numbers, found_optimize);
 
     return 0;
