@@ -41,12 +41,16 @@
 */
 
 int validate_usr_input(const int limit) {
-    if (limit > 1000000 || limit < 2)
+    if (limit > HIGHEST_LIMIT || limit < LOWEST_LIMIT)
     {
         printf("limit: %d is out of range [%d, %d]. END OF PROGRAM.\n", limit, LOWEST_LIMIT, HIGHEST_LIMIT);
         return EXIT_FAILURE;
     }
     return 1;
+}
+
+bool is_prime(int n, bool optimized, int prime_numbers[], int found) {
+    return optimized ? is_prime_optimized(n, prime_numbers, found) : is_prime_simple(n);
 }
 
 void find_prime_numbers(const int limit, int n, int prime_numbers[]) {
@@ -87,7 +91,6 @@ int main() {
     int limit;
     printf("PRIME NUMBER Generator: Enter a limit: ");
     scanf("%d", &limit);
-
     validate_usr_input(limit);
 
     int prime_numbers[PRIME_LENGTH];
